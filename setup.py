@@ -10,7 +10,7 @@ setup(
     license='MIT',
     description='PGP encrypted fields, which are encrypted by the pgcrypto postgres extension.',
     classifiers=[
-        'Development Status :: 1 - Beta',
+        'Development Status :: 4 - Beta',
         'Framework :: Django',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
