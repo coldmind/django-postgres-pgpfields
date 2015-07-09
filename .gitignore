@@ -1,0 +1,9 @@
+.env
+.py3env
+.idea
+.coverage
+.git
+*.pyc
+*.orig
+.DS_Store
+django_postgres_pgpfields.egg-info/
