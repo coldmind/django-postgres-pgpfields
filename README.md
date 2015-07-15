@@ -3,6 +3,7 @@
 Inspired by and partially forked https://github.com/incuna/django-pgcrypto-fields.  
 Improved to have ability to decrypt at select time instead of  
 generating dozens of requests when serializing big amount of data.
+Also more useful fields was added here.
 
 `django-postgres-pgpfields` is a `Django` collection of fields,  
 which are encrypted by PGP keys using `pgcrypto` extenstion  
@@ -29,7 +30,7 @@ Define next in `settings.py`:
 ```python
 PGPFIELDS_PUBLIC_KEY = "your public key here"  
 PGPFIELDS_PRIVATE_KEY = "your privatekey here"  
-# Add 'pgcrypto_fields' to INSTALLED_APPS to create  
+# Add 'django_postgres_pgpfields' to INSTALLED_APPS to create  
 # the extension for pgcrypto (it is located in a migration).  
 INSTALLED_APPS = (  
     ...  
