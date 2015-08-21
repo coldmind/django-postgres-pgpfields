@@ -1,12 +1,13 @@
 from __future__ import unicode_literals
 
 import datetime
+import sys
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import six
 
 from django_postgres_pgpfields import proxy
-from django_postgres_pgpfields import fields, managers
+from django_postgres_pgpfields import fields
 
 from .factories import EncryptedModelFactory
 from .models import EncryptedModel, EncryptedModelWithoutManager
@@ -178,3 +179,26 @@ class TestEncryptedTextFieldModel(TestCase):
         obj = EncryptedModelWithoutManager.objects.get()
         with self.assertRaisesMessage(ValueError, 'Unexpected encrypted field "pgp_pub_field"!'):
             obj.pgp_pub_field
+
+    @override_settings(PGPFIELDS_BYPASS_NON_DECRYPTED_FIELD_EXCEPTION=True)
+    def test_bypass_unexpected_decrypted_value(self):
+        EncryptedModelWithoutManager.objects.create(pgp_pub_field='test')
+        obj = EncryptedModelWithoutManager.objects.get()
+        try:
+            obj.pgp_pub_field
+        except ValueError:
+            self.fail('Unexpected exception!')
+
+    @override_settings(PGPFIELDS_BYPASS_FIELD_EXCEPTION_IN_MIGRATIONS=True)
+    def test_bypass_unexpected_decrypted_value(self):
+        argv_copy = sys.argv[:]
+        try:
+            sys.argv = ['python', 'manage.py', 'migrate']
+            EncryptedModelWithoutManager.objects.create(pgp_pub_field='test')
+            obj = EncryptedModelWithoutManager.objects.get()
+            try:
+                obj.pgp_pub_field
+            except ValueError:
+                self.fail('Unexpected exception!')
+        finally:
+            sys.argv = argv_copy

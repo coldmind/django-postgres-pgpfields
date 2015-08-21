@@ -25,11 +25,16 @@ or install it directly from github.
 
 #### Configuration
 
-Define next in `settings.py`:
+Define next in `settings.py`:  
 
 ```python
 PGPFIELDS_PUBLIC_KEY = "your public key here"  
 PGPFIELDS_PRIVATE_KEY = "your privatekey here"  
+```
+
+Optional settings:  
+
+```python
 # Add 'django_postgres_pgpfields' to INSTALLED_APPS to create  
 # the extension for pgcrypto (it is located in a migration).  
 INSTALLED_APPS = (  
@@ -37,6 +42,13 @@ INSTALLED_APPS = (
     'django_postgres_pgpfields',  
     ...  
 )  
+# If you want to bypass raising exception    
+# when accessing non-decrypted field.  
+PGPFIELDS_BYPASS_NON_DECRYPTED_FIELD_EXCEPTION = False  
+# Since django versions <1.8 have no support of  
+# Manager.use_in_migrations, you can bypass raising exception  
+# when accessing non-decrypted field inside some migration.  
+PGPFIELDS_BYPASS_FIELD_EXCEPTION_IN_MIGRATIONS = False  
 ```
 
 #### Usage
@@ -57,4 +69,5 @@ define the `django_postgres_pgpfields.managers.PGPEncryptedManager`
 manager in your model.  
 It is not necessary to override default django manager, but if  
 you will try access encrypted field, when data was obtained not by  
-`PGPEncryptedManager`, `ValueError` will be raised.
+`PGPEncryptedManager`, `ValueError` will be raised (if not bypassed  
+by settings).

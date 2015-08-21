@@ -1,5 +1,8 @@
 from __future__ import unicode_literals
 
+import sys
+
+from django.conf import settings
 from django.utils import six
 
 
@@ -41,7 +44,9 @@ class EncryptedProxyField(object):
         # Need to raise error, because it is not a normal
         # situation and need to check what is going on
         # instead of using encrypted buffer.
-        if isinstance(value, six.buffer_types):
+        # Can be bypassed in some cases.
+        if (isinstance(value, six.buffer_types) and
+                not self._bypass_non_decrypted_field_exception):
             raise ValueError('Unexpected encrypted field "%s"!' % self.field.name)
 
         return instance.__dict__[self.field.name]
@@ -53,3 +58,16 @@ class EncryptedProxyField(object):
         The value will be keyed by the field's name.
         """
         instance.__dict__[self.field.name] = value
+
+    @property
+    def _bypass_non_decrypted_field_exception(self):
+        """Bypass exception if some field was not decrypted."""
+        if getattr(settings, 'PGPFIELDS_BYPASS_NON_DECRYPTED_FIELD_EXCEPTION', False):
+            return True
+        if getattr(settings, 'PGPFIELDS_BYPASS_FIELD_EXCEPTION_IN_MIGRATIONS', False):
+            # Since django versions <1.8 have no support of
+            # Manager.use_in_migrations, need to turn raising
+            # exception off.
+            if {'manage.py', 'migrate'}.issubset(sys.argv):
+                return True
+        return False
