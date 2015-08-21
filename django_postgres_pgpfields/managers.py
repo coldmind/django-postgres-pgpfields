@@ -10,6 +10,7 @@ class PGPEncryptedManager(models.Manager):
     """Custom manager to decrypt values at query time."""
 
     use_for_related_fields = True
+    use_in_migrations = True
 
     def get_decrypt_sql(self, field):
         """If field needs an explicit cast, use it."""
