@@ -7,13 +7,8 @@ from django.utils import six
 
 
 class EncryptedProxyField(object):
-    """Descriptor for encrypted values.
+    """Descriptor for encrypted values."""
 
-    Decrypted values will query the database through the field's model.
-
-    When accessing the field name attribute on a model instance we are
-    generating N+1 queries.
-    """
     def __init__(self, field):
         """
         Create a proxy for a django field.
@@ -24,11 +19,7 @@ class EncryptedProxyField(object):
         self.model = field.model
 
     def __get__(self, instance, owner=None):
-        """
-        Retrieve the value of the field from the instance.
-
-        If the value has been saved to the database, decrypt it using an aggregate query.
-        """
+        """Retrieve the value of the field from the instance."""
         if not instance:
             return self
 
